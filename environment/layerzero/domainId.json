@@ -1,0 +1,79 @@
+{
+    "all": ["arbitrum", "avalanche", "bsc", "celo", "ethereum", "gnosis", "moonbeam", "polygon", "optimism", "alfajores", "bscTestnet", "fuji", "goerli", "sepolia", "mumbai", "moonbeamAlpha", "optimismGoerli", "arbitrumGoerli"],
+    "mainnet": ["arbitrum", "avalanche", "bsc", "celo", "ethereum", "gnosis", "moonbeam", "polygon", "optimism"],
+    "testnet": ["alfajores", "bscTestnet", "fuji", "goerli", "sepolia", "mumbai", "moonbeamAlpha", "optimismGoerli", "arbitrumGoerli"],
+    "arbitrum": {
+        "layerzero": "110",
+        "hyperlane": "42161"      
+    },
+    "avalanche": {
+        "layerzero": "106",
+        "hyperlane": "43114"    
+    },
+    "bsc": {
+        "layerzero": "102",
+        "hyperlane": "56"
+      },
+    "celo": {
+        "layerzero": "125",
+        "hyperlane": "42220"
+    },
+    "ethereum": {
+        "layerzero": "101",
+        "hyperlane": "1"
+    },
+    "gnosis": {
+        "layerzero": "145",
+        "hyperlane": "100"
+    },
+    "moonbeam": {
+        "layerzero": "126",
+        "hyperlane": "1284"
+    },
+    "polygon": {
+        "layerzero": "109",
+        "hyperlane": "137"
+    },
+    "optimism": {
+        "layerzero": "111",
+        "hyperlane": "10"
+    },
+
+    "alfajores": {
+        "layerzero": "10125",
+        "hyperlane": "44787"      
+    },
+    "bscTestnet": {
+        "layerzero": "10102",
+        "hyperlane": "97"    
+    },
+    "fuji": {
+        "layerzero": "10106",
+        "hyperlane": "43113"
+      },
+    "goerli": {
+        "layerzero": "10121",
+        "hyperlane": "5"
+    },
+    "sepolia": {
+        "layerzero": "10161",
+        "hyperlane": "11155111"
+    },
+    "mumbai": {
+        "layerzero": "10109",
+        "hyperlane": "8001"
+    },
+    "moonbeamAlpha": {
+        "layerzero": "10126",
+        "hyperlane": "1287"
+    },
+    "optimismGoerli": {
+        "layerzero": "10132",
+        "hyperlane": "420"
+    },
+    "arbitrumGoerli": {
+        "layerzero": "10143",
+        "hyperlane": "421613"
+    }
+  }
+  
