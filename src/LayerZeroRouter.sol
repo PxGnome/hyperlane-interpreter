@@ -6,8 +6,6 @@ import {TypeCasts} from "@hyperlane-xyz/core/contracts/libs/TypeCasts.sol";
 import {ILayerZeroEndpoint} from "./interfaces/ILayerZeroEndpoint.sol";
 import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
 
-// import "forge-std/console.sol";
-
 /**
  * @title LayerZeroRouter
  * @notice Example of middleware to use hyperlane in a layerzero app on layerZero
