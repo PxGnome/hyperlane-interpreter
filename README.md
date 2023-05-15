@@ -61,3 +61,21 @@ To run tests to see how it works you can run
 To deploy using the deployment scripts you will need to set up an `.env` file just like the `.env.example.` and use:
 - `script/01_Deploy_LayerZeroRouter.s.sol` -- This handles the deployment and needs to be done step by step since it is written in foundry
 - `script/02_Test_LayerZeroRouter.s.sol` -- This uses the deployed routers to send some test messages which can be seen on [Hyperlane Explorer](https://explorer.hyperlane.xyz/)
+
+## Examples ##
+### Contracts ###
+- [MockerLayerZeroRouter on Sepolia](
+https://sepolia.etherscan.io/address/0x060b3d668D108F4B8EB3214830378C9528736942)
+- [MockerLayerZeroRouter on Mumbai](https://mumbai.polygonscan.com/address/0x83931a023ace2af8f799c61697c491c040422a0d)
+- [MockLzReceive on Sepolia](
+https://sepolia.etherscan.io/address/0x5f2de53c87189c653ca31235c06199c1757482b5)
+- [MockLzReceive on Mumbai](https://mumbai.polygonscan.com/address/0xd0ef7e1f13ca989f726badd852345cb096a43b9f)
+
+### Messages ###
+
+- [Example Message](https://explorer.hyperlane.xyz/message/0x6346ef364ee68056a8df60d71980333042b349e3d5168021373a3e9a6ecef796) -- Mumbai :arrow_right: Sepolia
+- [Example Message](https://explorer.hyperlane.xyz/message/0xe6571bb933b51372950a6284c907f13e2fbe195ad585799c97d10f461f98dc5d) -- Sepolia :arrow_right: Mumbai
+
+
+
+
