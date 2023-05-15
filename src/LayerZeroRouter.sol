@@ -20,7 +20,7 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
     error LayerZeroDomainNotMapped(uint16);
     error HyperlaneDomainNotMapped(uint32);
 
-    uint256 estGasAmount = 200000; //The default for layerzero
+    uint256 estGasAmount = 20000000; //The default from testing
  
     /**
      * @notice Initializes the LayerZeroRouter
@@ -194,19 +194,17 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
                 revert("Invalid adapter params");
             }
         } else {
-            gasAmount = interchainGasPaymaster.quoteGasPayment(
+            gasPayment = interchainGasPaymaster.quoteGasPayment(
                 dstChainId32,
                 estGasAmount
             );
         }
 
         require(msg.value >= gasAmount, "Not enough gas");
-        (gasPayment == 0) ? gasPayment = msg.value : gasPayment = gasPayment;
-        
         _dispatchWithGas(
             dstChainId32,
             messageBody,
-            gasAmount,
+            estGasAmount,
             gasPayment,
             _refundAddress
         );

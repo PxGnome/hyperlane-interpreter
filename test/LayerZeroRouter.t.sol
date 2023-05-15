@@ -109,8 +109,8 @@ contract LayerZeroRouterTest is Test {
     }
 
     function testCanSendReceiveMessage() public {
-        uint256 gasValue = 20000000000000000000; //Need fix here
-
+        // uint256 gasValue = 200000000;
+        
         address remoteAddr = address(mockLzReceiver);
         address senderAddr = msg.sender;
         bytes memory destination = abi.encodePacked(remoteAddr, senderAddr);
@@ -121,6 +121,9 @@ contract LayerZeroRouterTest is Test {
 
         bytes memory payload = abi.encode("");
 
+        (uint256 gasValue, ) = originRouter.estimateFees(lzDestinationDomain, remoteAddr, payload, false, "");
+        // gasValue += 100000;
+        console.log("Gas Value: %s", gasValue);
         originRouter.send{value: gasValue}(
             lzDestinationDomain,
             destination,
@@ -188,7 +191,7 @@ contract LayerZeroRouterTest is Test {
         assertEq(destinationRouter.getHyperlaneDomain(10143), 421613);
 
         assertEq(destinationRouter.getLayerZeroDomain(1287), 10126);
-        assertEq(destinationRouter.getLayerZeroDomain(8001), 10109);
+        assertEq(destinationRouter.getLayerZeroDomain(80001), 10109);
     }
     function domainMapping(MockLayerZeroRouter _router ,string memory _networkList) internal {
         string memory root = vm.projectRoot();
