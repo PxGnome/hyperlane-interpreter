@@ -1,16 +1,16 @@
-// SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
 import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
 
 import "forge-std/console.sol";
 
 /**
- * @title MockLzRecieve
- * @notice Mock LzReceive for testing
+ * @title SimulateLzReceiver
+ * @notice SimulateLzReceiver for testing and showcasing how lzReceive would work
  */
 
-contract MockLzReceiver is ILayerZeroReceiver {
+contract SimulateLzReceiver is ILayerZeroReceiver {
     bytes public lastSender;
     bytes public lastData;
 
@@ -29,7 +29,7 @@ contract MockLzReceiver is ILayerZeroReceiver {
          uint64 _nonce,
          bytes calldata _payload
      ) external override {
-        console.log("MockLzReceiver.lzReceive called");
+        console.log("SimulateLzReceiver.lzReceive called");
         emit ReceivedMessage(_srcChainId, _srcAddress, string(_payload));
 
         lastSender = _srcAddress;

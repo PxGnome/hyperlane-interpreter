@@ -1,0 +1,66 @@
+{
+    "all": ["arbitrum", "avalanche", "bsc", "celo", "ethereum", "moonbeam", "polygon", "alfajores", "bscTestnet", "fuji", "goerli", "mumbai", "moonbeamAlpha", "optimismGoerli", "arbitrumGoerli"],
+    "mainnet": ["arbitrum", "avalanche", "bsc", "celo", "ethereum", "moonbeam", "polygon"],
+    "testnet": ["alfajores", "bscTestnet", "fuji", "goerli", "mumbai", "moonbeamAlpha", "optimismGoerli", "arbitrumGoerli"],
+    "arbitrum": {
+        "hyperlane": "42161",
+        "axelar": "arbitrum"
+    },
+    "avalanche": {
+        "hyperlane": "43114",
+        "axelar": "Avalanche" 
+    },
+    "bsc": {
+        "hyperlane": "56",
+        "axelar": "binance"
+      },
+    "celo": {
+        "hyperlane": "42220",
+        "axelar": "celo"
+    },
+    "ethereum": {
+        "hyperlane": "1",
+        "axelar": "Ethereum"
+    },
+    "moonbeam": {
+        "hyperlane": "1284",
+        "axelar": "Moonbeam"
+    },
+    "polygon": {
+        "hyperlane": "137",
+        "axelar": "Polygon"
+    },
+    "alfajores": {
+        "hyperlane": "44787",
+        "axelar": "celo"      
+    },
+    "bscTestnet": {
+        "hyperlane": "97",
+        "axelar": "binance"    
+    },
+    "fuji": {
+        "hyperlane": "43113",
+        "axelar": "Avalanche"
+      },
+    "goerli": {
+        "hyperlane": "5",
+        "axelar": "ethereum-2"
+    },
+    "mumbai": {
+        "hyperlane": "80001",
+        "axelar": "Polygon"
+    },
+    "moonbeamAlpha": {
+        "hyperlane": "1287",
+        "axelar": "Moonbeam"
+    },
+    "optimismGoerli": {
+        "hyperlane": "420",
+        "axelar": "optimism"
+    },
+    "arbitrumGoerli": {
+        "hyperlane": "421613",
+        "axelar": "arbitrum"
+    }
+  }
+  

@@ -1,2 +1,5 @@
+@hyperlane-xyz/=node_modules/@hyperlane-xyz/
+@openzeppelin/=node_modules/@openzeppelin/
+@axelar-network/=node_modules/
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/

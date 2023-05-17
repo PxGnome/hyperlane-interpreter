@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.19;
 
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import {TypeCasts} from "@hyperlane-xyz/core/contracts/libs/TypeCasts.sol";
 import {MockHyperlaneEnvironment, MockMailbox} from "@hyperlane-xyz/core/contracts/mock/MockHyperlaneEnvironment.sol";
 
-import {MockLayerZeroRouter} from "../src/MockLayerZeroRouter.sol";
-import {MockLzReceiver} from "../src/MockLzReceiver.sol";
+import {LayerZeroRouter} from "../src/LayerZeroRouter.sol";
+import {SimulateLzReceiver} from "../src/SimulateLzReceiver.sol";
 
 
 abstract contract Abstract_LayerZeroRouterDeployer is Script {
     using stdJson for string;
-    MockLayerZeroRouter lzRouter;
+    LayerZeroRouter lzRouter;
 
-    function domainMapping(MockLayerZeroRouter _router ,string memory networkList) internal {
+    function domainMapping(LayerZeroRouter _router ,string memory networkList) internal {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/layerzero/domainId.json");
         string memory json = vm.readFile(path);
@@ -38,7 +38,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
     
     function getAddresses(string memory network, string memory _item) internal returns (address) {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/environment/layerzero/addresses.json");
+        string memory path = string.concat(root, "/environment/hyperlane/addresses.json");
         string memory json = vm.readFile(path);
         string memory key = string.concat(".", network, ".", _item);
         address addr = json.readAddress(key);
@@ -56,13 +56,11 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         return domainId;
     }
     function deploy(string memory _routerType) internal {
-        // _routerType = string.concat(_routerType, "_");
-        // string memory network = vm.envString(string.concat(_routerType,"NETWORK"));
         console.log("Deploying on network: %s",_routerType);
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        lzRouter = new MockLayerZeroRouter();
+        lzRouter = new LayerZeroRouter();
 
         vm.stopBroadcast();
         console.log("LayerZero Router Address: %s", address(lzRouter));
@@ -75,7 +73,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
         address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
-        lzRouter = MockLayerZeroRouter(routerAddr);
+        lzRouter = LayerZeroRouter(routerAddr);
 
         console.log("Initializing lzRouter: %s", address(lzRouter));
         vm.startBroadcast(deployerPrivateKey);
@@ -95,7 +93,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
-        lzRouter = MockLayerZeroRouter(routerAddr);
+        lzRouter = LayerZeroRouter(routerAddr);
 
         domainMapping(lzRouter, ".all");
         vm.stopBroadcast();
@@ -115,7 +113,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         _routerType = string.concat(_routerType, "_");
 
         address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
-        lzRouter = MockLayerZeroRouter(routerAddr);
+        lzRouter = LayerZeroRouter(routerAddr);
 
         if(compare(_routerType, "ORIGIN_")){
             _routerType = "DESTINATION_";
@@ -127,7 +125,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         }
 
         routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
-        address enrollRouterAddr = address(MockLayerZeroRouter(routerAddr));
+        address enrollRouterAddr = address(LayerZeroRouter(routerAddr));
 
         string memory network = vm.envString(string.concat(_routerType,"NETWORK"));
         uint32 hlDestinationDomain = uint32(getDomainId(network, "hyperlane"));
@@ -193,17 +191,17 @@ contract EnrollRouter_Destination is Abstract_LayerZeroRouterDeployer {
 }
 
 
-contract DeployMockLzReceiver is Script {
+contract DeploySimulateLzReceiver is Script {
     using stdJson for string;
 
-    MockLzReceiver mockLzReceiver;
+    SimulateLzReceiver simulateLzReceiver;
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        mockLzReceiver = new MockLzReceiver();
-        console.log("MockLzReceiver Address: %s", address(mockLzReceiver));
+        simulateLzReceiver = new SimulateLzReceiver();
+        console.log("SimulateLzReceiver Address: %s", address(simulateLzReceiver));
         vm.stopBroadcast();
     }
 }

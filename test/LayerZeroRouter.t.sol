@@ -1,28 +1,26 @@
-// SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
 import "forge-std/Test.sol";
 
 import {TypeCasts} from "@hyperlane-xyz/core/contracts/libs/TypeCasts.sol";
 import {MockHyperlaneEnvironment, MockMailbox} from "@hyperlane-xyz/core/contracts/mock/MockHyperlaneEnvironment.sol";
 
-import {MockLayerZeroRouter} from "../src/MockLayerZeroRouter.sol";
-import {MockLzReceiver} from "../src/MockLzReceiver.sol";
+import {LayerZeroRouter} from "../src/LayerZeroRouter.sol";
+import {SimulateLzReceiver} from "../src/SimulateLzReceiver.sol";
 
 
 import "forge-std/StdJson.sol";
-
-// import "../environment/layerzero/addresses.json";
 
 contract LayerZeroRouterTest is Test {
     using stdJson for string;
 
     MockHyperlaneEnvironment testEnvironment;
 
-    MockLayerZeroRouter originRouter;
-    MockLayerZeroRouter destinationRouter;
+    LayerZeroRouter originRouter;
+    LayerZeroRouter destinationRouter;
 
-    MockLzReceiver mockLzReceiver;
+    SimulateLzReceiver simulateLzReceiver;
 
     uint16 lzOriginDomain;
     uint16 lzDestinationDomain;
@@ -46,8 +44,8 @@ contract LayerZeroRouterTest is Test {
         hlOriginDomain = uint32(getDomainId("sepolia", "hyperlane"));
         hlDestinationDomain = uint32(getDomainId("mumbai", "hyperlane"));
 
-        originRouter = new MockLayerZeroRouter();
-        destinationRouter = new MockLayerZeroRouter();
+        originRouter = new LayerZeroRouter();
+        destinationRouter = new LayerZeroRouter();
 
         testEnvironment = new MockHyperlaneEnvironment(
             hlOriginDomain,
@@ -100,18 +98,12 @@ contract LayerZeroRouterTest is Test {
             TypeCasts.addressToBytes32(address(originRouter))
         );
 
-        mockLzReceiver = new MockLzReceiver();
+        simulateLzReceiver = new SimulateLzReceiver();
 
-        //Set expected gas usage
-        // uint256 gasEstimate = 10505;
-        // originRouter.setEstGasAmount(gasEstimate);
-        // destinationRouter.setEstGasAmount(gasEstimate);
     }
 
-    function testCanSendReceiveMessage() public {
-        // uint256 gasValue = 200000000;
-        
-        address remoteAddr = address(mockLzReceiver);
+    function testCanSendReceiveMessage() public {        
+        address remoteAddr = address(simulateLzReceiver);
         address senderAddr = msg.sender;
         bytes memory destination = abi.encodePacked(remoteAddr, senderAddr);
 
@@ -122,7 +114,7 @@ contract LayerZeroRouterTest is Test {
         bytes memory payload = abi.encode("");
 
         (uint256 gasValue, ) = originRouter.estimateFees(lzDestinationDomain, remoteAddr, payload, false, "");
-        // gasValue += 100000;
+
         console.log("Gas Value: %s", gasValue);
         originRouter.send{value: gasValue}(
             lzDestinationDomain,
@@ -149,10 +141,10 @@ contract LayerZeroRouterTest is Test {
         );
         testEnvironment.processNextPendingMessage();
 
-        assertEq(mockLzReceiver.lastData(), payload);
-        assertEq(mockLzReceiver.lastSender(), abi.encode(senderAddr));
+        assertEq(simulateLzReceiver.lastData(), payload);
+        assertEq(simulateLzReceiver.lastSender(), abi.encode(senderAddr));
         
-        bytes memory destinationAs32 = abi.encode(address(mockLzReceiver));
+        bytes memory destinationAs32 = abi.encode(address(simulateLzReceiver));
 
         originRouter.send{value: gasValue}(
             lzDestinationDomain,
@@ -174,8 +166,8 @@ contract LayerZeroRouterTest is Test {
         );
         testEnvironment.processNextPendingMessage();
 
-        assertEq(mockLzReceiver.lastData(), payload);
-        assertEq(mockLzReceiver.lastSender(), abi.encode(senderAddr));
+        assertEq(simulateLzReceiver.lastData(), payload);
+        assertEq(simulateLzReceiver.lastSender(), abi.encode(senderAddr));
     }
     function testMapping() public {
         domainMapping(originRouter, ".all");
@@ -193,7 +185,7 @@ contract LayerZeroRouterTest is Test {
         assertEq(destinationRouter.getLayerZeroDomain(1287), 10126);
         assertEq(destinationRouter.getLayerZeroDomain(80001), 10109);
     }
-    function domainMapping(MockLayerZeroRouter _router ,string memory _networkList) internal {
+    function domainMapping(LayerZeroRouter _router ,string memory _networkList) internal {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/layerzero/domainId.json");
         string memory json = vm.readFile(path);
@@ -201,7 +193,6 @@ contract LayerZeroRouterTest is Test {
         string[] memory list = json.readStringArray(_networkList);
 
         uint16[] memory lzDomains = new uint16[](list.length);
-        lzDomains = new uint16[](list.length);
         uint32[] memory hlDomains = new uint32[](list.length);
         string memory key;
         for (uint i = 0; i < list.length; i++) {

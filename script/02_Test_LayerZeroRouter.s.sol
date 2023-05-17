@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.19;
 
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import {TypeCasts} from "@hyperlane-xyz/core/contracts/libs/TypeCasts.sol";
 import {MockHyperlaneEnvironment, MockMailbox} from "@hyperlane-xyz/core/contracts/mock/MockHyperlaneEnvironment.sol";
-import {MockLayerZeroRouter} from "../src/MockLayerZeroRouter.sol";
-import {MockLzReceiver} from "../src/MockLzReceiver.sol";
+import {LayerZeroRouter} from "../src/LayerZeroRouter.sol";
+import {SimulateLzReceiver} from "../src/SimulateLzReceiver.sol";
 
 
 abstract contract AbstractSendMessageFrom is Script {
     using stdJson for string;
-    MockLayerZeroRouter lzRouter;
+    LayerZeroRouter lzRouter;
 
     function getDomainId(string memory network, string memory _bridge) internal returns (uint256) {
         string memory root = vm.projectRoot();
@@ -37,7 +37,7 @@ abstract contract AbstractSendMessageFrom is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
         address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
-        lzRouter = MockLayerZeroRouter(routerAddr);
+        lzRouter = LayerZeroRouter(routerAddr);
 
         if(compare(_routerType, "ORIGIN_")){
             _routerType = "DESTINATION_";

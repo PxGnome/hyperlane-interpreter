@@ -1,8 +1,6 @@
-// SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.13;
-
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 import {Router} from "@hyperlane-xyz/core/contracts/Router.sol";
-import {TypeCasts} from "@hyperlane-xyz/core/contracts/libs/TypeCasts.sol";
 import {ILayerZeroEndpoint} from "./interfaces/ILayerZeroEndpoint.sol";
 import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
 
@@ -13,14 +11,14 @@ import {ILayerZeroReceiver} from "./interfaces/ILayerZeroReceiver.sol";
  * @dev Please make sure to edit lzReceive() and setEstGasAmount() to match gas usage of lzReceive() in your app
  * @dev Run `forge test --match-contract LayerZeroRouterTest` to see tests
  */
-abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
+contract LayerZeroRouter is Router {
     mapping(uint16 => uint32) layerZeroToHyperlaneDomain;
     mapping(uint32 => uint16) hyperlaneToLayerZeroDomain;
 
     error LayerZeroDomainNotMapped(uint16);
     error HyperlaneDomainNotMapped(uint32);
 
-    uint256 estGasAmount = 20000000; //The default from testing
+    uint256 estGasAmount = 200000; //The default from testing
  
     /**
      * @notice Initializes the LayerZeroRouter
@@ -163,7 +161,7 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
         address payable _refundAddress,
         address _zroPaymentAddress,
         bytes memory _adapterParams
-    ) external payable override {
+    ) external payable {
         uint32 dstChainId32 = layerZeroToHyperlaneDomain[_dstChainId];
         address remoteAddr;
        
@@ -200,12 +198,12 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
             );
         }
 
-        require(msg.value >= gasAmount, "Not enough gas");
+        require(msg.value >= gasPayment, "Not enough gas");
         _dispatchWithGas(
             dstChainId32,
             messageBody,
             estGasAmount,
-            gasPayment,
+            msg.value,
             _refundAddress
         );
         
@@ -256,8 +254,7 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
         bytes memory _payload,
         bool _payInZRO,
         bytes memory _adapterParams
-    ) public view override returns (uint256 nativeFee, uint256 zroFee) {        
-        require(estGasAmount > 0, "Please set gas amount");
+    ) public view returns (uint256 nativeFee, uint256 zroFee) {        
         return (
             interchainGasPaymaster.quoteGasPayment(
                 layerZeroToHyperlaneDomain[_dstChainId],
@@ -295,7 +292,7 @@ abstract contract LayerZeroRouter is Router, ILayerZeroEndpoint {
      * @notice Gets the chain ID of the current chain
      * @dev override from ILayerZeroEndpoint.sol -- NOTE OVERFLOW RISK
      */
-    function getChainId() external view override returns (uint16) {
+    function getChainId() external view returns (uint16) {
         return hyperlaneToLayerZeroDomain[mailbox.localDomain()];
     }
 

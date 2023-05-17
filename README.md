@@ -3,6 +3,8 @@
 
 **Update:**
 
+- **2023 May 18** -- Added AxelarRouter and finished basic unit testing but pending live deployment testing, will work on hardhat deployment as well for both set of code. Will be submitting for this bounty as well ([link](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues/2186))
+
 
 - **2023 May 15** -- Initial deployment and preparation for submission for Hyperlane bounty on LayerZero implementation ([link](https://github.com/hyperlane-xyz/hyperlane-monorepo/issues/2185))
 

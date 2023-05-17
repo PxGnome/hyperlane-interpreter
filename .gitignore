@@ -1,6 +1,7 @@
 cache/
 broadcast/
 out/
+lib/
 node_modules/
 forge-cache/
 .vscode
