@@ -40,7 +40,6 @@ contract AxelarRoutertest is Test {
         return uint32(json.readUint(key));
     }
 
-
     function setUp() public {
         hlOriginDomain = getDomainIdForHl("arbitrumGoerli");
         axOriginDomain = getDomainIdForAx("arbitrumGoerli");
@@ -69,18 +68,9 @@ contract AxelarRoutertest is Test {
         );
 
         console.log("Origin Router Address: %s", address(originRouter));
-        console.log(
-            "Origin Mailbox: %s",
-            address(testEnvironment.mailboxes(hlOriginDomain))
-        );
-        console.log(
-            "Destination Router Address: %s",
-            address(destinationRouter)
-        );
-        console.log(
-            "Destination Mailbox: %s",
-            address(testEnvironment.mailboxes(hlDestinationDomain))
-        );
+        console.log("Origin Mailbox: %s", address(testEnvironment.mailboxes(hlOriginDomain)));
+        console.log("Destination Router Address: %s", address(destinationRouter));
+        console.log("Destination Mailbox: %s", address(testEnvironment.mailboxes(hlDestinationDomain)));
 
         string[] memory axDomains = new string[](2);
         axDomains[0] = axOriginDomain;
@@ -93,27 +83,20 @@ contract AxelarRoutertest is Test {
         originRouter.mapDomains(axDomains, hlDomains);
         destinationRouter.mapDomains(axDomains, hlDomains);
 
-        originRouter.enrollRemoteRouter(
-            hlDestinationDomain,
-            TypeCasts.addressToBytes32(address(destinationRouter))
-        );
-        destinationRouter.enrollRemoteRouter(
-            hlOriginDomain,
-            TypeCasts.addressToBytes32(address(originRouter))
-        );
-
+        originRouter.enrollRemoteRouter(hlDestinationDomain, TypeCasts.addressToBytes32(address(destinationRouter)));
+        destinationRouter.enrollRemoteRouter(hlOriginDomain, TypeCasts.addressToBytes32(address(originRouter)));
     }
 
     function testCanSendReceiveMessage() public {
         uint256 estGasAmount = 2000000;
-        
+
         address remoteAddr = address(destinationRouter);
-        
+
         address senderAddr = msg.sender;
         // string memory destination = vm.toString(remoteAddr);
-        string memory destination = '0x2e234DAe75C793f67A35089C9d99245E1C58470b';
+        string memory destination = "0x2e234DAe75C793f67A35089C9d99245E1C58470b";
         console.log("Destination: %s", destination);
-        
+
         console.log("Recipient: %s", remoteAddr);
         console.log("Sender: %s", senderAddr);
         vm.startPrank(senderAddr);
@@ -123,39 +106,29 @@ contract AxelarRoutertest is Test {
         uint256 gasValue = originRouter.quoteGasPayment(axDestinationDomain, estGasAmount);
 
         console.log("Gas Value: %s", gasValue);
-        originRouter.callContractwithGas{value: gasValue}(
-            axDestinationDomain,
-            destination,
-            payload
-        );
+        originRouter.callContractwithGas{value: gasValue}(axDestinationDomain, destination, payload);
 
-        bytes32 senderAsBytes32 = TypeCasts.addressToBytes32(
-            address(originRouter)
-        );
+        bytes32 senderAsBytes32 = TypeCasts.addressToBytes32(address(originRouter));
 
         bytes memory messageBody = abi.encode(remoteAddr, payload);
 
         vm.expectCall(
             address(destinationRouter),
-            abi.encodeWithSelector(
-                destinationRouter.handle.selector,
-                hlOriginDomain,
-                senderAsBytes32,
-                messageBody
-            )
+            abi.encodeWithSelector(destinationRouter.handle.selector, hlOriginDomain, senderAsBytes32, messageBody)
         );
         testEnvironment.processNextPendingMessage();
 
         assertEq(destinationRouter.sourceChain(), axOriginDomain);
         // assertEq(destinationRouter.sourceAddress(), destination);
     }
+
     function testMapping() public {
         domainMapping(originRouter, ".mainnet");
         domainMapping(destinationRouter, ".mainnet");
 
         assertEq(originRouter.getHyperlaneDomain("Ethereum"), 1);
         assertEq(destinationRouter.getHyperlaneDomain("celo"), 42220);
-        
+
         assertEq(originRouter.getAxelarDomain(56), "binance");
         assertEq(destinationRouter.getAxelarDomain(43114), "Avalanche");
 
@@ -168,24 +141,25 @@ contract AxelarRoutertest is Test {
         assertEq(destinationRouter.getAxelarDomain(1287), "Moonbeam");
         assertEq(destinationRouter.getAxelarDomain(80001), "Polygon");
     }
-    function domainMapping(AxelarRouter _router ,string memory _networkList) internal {
+
+    function domainMapping(AxelarRouter _router, string memory _networkList) internal {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/axelar/domainId.json");
         string memory json = vm.readFile(path);
-        
+
         string[] memory list = json.readStringArray(_networkList);
 
         string[] memory axDomains = new string[](list.length);
         uint32[] memory hlDomains = new uint32[](list.length);
         string memory key;
-        for (uint i = 0; i < list.length; i++) {
+        for (uint256 i = 0; i < list.length; i++) {
             key = string.concat(".", list[i], ".axelar");
             axDomains[i] = json.readString(key);
             key = string.concat(".", list[i], ".hyperlane");
             hlDomains[i] = uint32(json.readUint(key));
             // console.log("Network: %s", list[i]);
             // console.log("AX: %s", axDomains[i]);
-            // console.log("HL: %s", hlDomains[i]);    
+            // console.log("HL: %s", hlDomains[i]);
         }
 
         _router.mapDomains(axDomains, hlDomains);

@@ -9,23 +9,23 @@ import {MockHyperlaneEnvironment, MockMailbox} from "@hyperlane-xyz/core/contrac
 import {LayerZeroRouter} from "../src/LayerZeroRouter.sol";
 import {SimulateLzReceiver} from "../src/SimulateLzReceiver.sol";
 
-
 abstract contract Abstract_LayerZeroRouterDeployer is Script {
     using stdJson for string;
+
     LayerZeroRouter lzRouter;
 
-    function domainMapping(LayerZeroRouter _router ,string memory networkList) internal {
+    function domainMapping(LayerZeroRouter _router, string memory networkList) internal {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/layerzero/domainId.json");
         string memory json = vm.readFile(path);
-        
+
         string[] memory list = json.readStringArray(networkList);
 
         uint16[] memory lzDomains = new uint16[](list.length);
         lzDomains = new uint16[](list.length);
         uint32[] memory hlDomains = new uint32[](list.length);
         string memory key;
-        for (uint i = 0; i < list.length; i++) {
+        for (uint256 i = 0; i < list.length; i++) {
             key = string.concat(".", list[i], ".layerzero");
             lzDomains[i] = uint16(json.readUint(key));
             key = string.concat(".", list[i], ".hyperlane");
@@ -35,7 +35,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
 
         _router.mapDomains(lzDomains, hlDomains);
     }
-    
+
     function getAddresses(string memory network, string memory _item) internal returns (address) {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/hyperlane/addresses.json");
@@ -45,7 +45,7 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         // console.log("%s Address: %s", key, addr);
         return addr;
     }
-    
+
     function getDomainId(string memory network, string memory _bridge) internal returns (uint256) {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/environment/layerzero/domainId.json");
@@ -55,8 +55,9 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
         console.log("%s-%s domainId: %s", network, _bridge, domainId);
         return domainId;
     }
+
     function deploy(string memory _routerType) internal {
-        console.log("Deploying on network: %s",_routerType);
+        console.log("Deploying on network: %s", _routerType);
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
@@ -67,32 +68,31 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
     }
 
     function init(string memory _routerType) internal {
-        console.log("Working on network: %s",_routerType);
+        console.log("Working on network: %s", _routerType);
         _routerType = string.concat(_routerType, "_");
-        string memory network = vm.envString(string.concat(_routerType,"NETWORK"));
+        string memory network = vm.envString(string.concat(_routerType, "NETWORK"));
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
-        address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
+        address routerAddr = vm.envAddress(string.concat(_routerType, "ROUTER"));
         lzRouter = LayerZeroRouter(routerAddr);
 
         console.log("Initializing lzRouter: %s", address(lzRouter));
         vm.startBroadcast(deployerPrivateKey);
 
         lzRouter.initialize(
-            getAddresses(network, "mailbox"),
-            getAddresses(network, "igp"),
-            getAddresses(network, "ism")
+            getAddresses(network, "mailbox"), getAddresses(network, "igp"), getAddresses(network, "ism")
         );
         vm.stopBroadcast();
         console.log("LayerZero Router initialized");
     }
+
     function mapRouter(string memory _routerType) internal {
-        console.log("Working on network: %s",_routerType);
+        console.log("Working on network: %s", _routerType);
         _routerType = string.concat(_routerType, "_");
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
+        address routerAddr = vm.envAddress(string.concat(_routerType, "ROUTER"));
         lzRouter = LayerZeroRouter(routerAddr);
 
         domainMapping(lzRouter, ".all");
@@ -112,35 +112,31 @@ abstract contract Abstract_LayerZeroRouterDeployer is Script {
 
         _routerType = string.concat(_routerType, "_");
 
-        address routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
+        address routerAddr = vm.envAddress(string.concat(_routerType, "ROUTER"));
         lzRouter = LayerZeroRouter(routerAddr);
 
-        if(compare(_routerType, "ORIGIN_")){
+        if (compare(_routerType, "ORIGIN_")) {
             _routerType = "DESTINATION_";
-        } else if(compare(_routerType, "DESTINATION_")){
+        } else if (compare(_routerType, "DESTINATION_")) {
             _routerType = "ORIGIN_";
         } else {
             console.log("Invalid network");
             return;
         }
 
-        routerAddr = vm.envAddress(string.concat(_routerType,"ROUTER"));
+        routerAddr = vm.envAddress(string.concat(_routerType, "ROUTER"));
         address enrollRouterAddr = address(LayerZeroRouter(routerAddr));
 
-        string memory network = vm.envString(string.concat(_routerType,"NETWORK"));
+        string memory network = vm.envString(string.concat(_routerType, "NETWORK"));
         uint32 hlDestinationDomain = uint32(getDomainId(network, "hyperlane"));
-        
-        console.log("Enrolling %s for domain Id: %s",enrollRouterAddr, hlDestinationDomain);
+
+        console.log("Enrolling %s for domain Id: %s", enrollRouterAddr, hlDestinationDomain);
 
         vm.startBroadcast(deployerPrivateKey);
 
-        lzRouter.enrollRemoteRouter(
-            hlDestinationDomain,
-            TypeCasts.addressToBytes32(enrollRouterAddr)
-        );   
-        vm.stopBroadcast(); 
-        }
-
+        lzRouter.enrollRemoteRouter(hlDestinationDomain, TypeCasts.addressToBytes32(enrollRouterAddr));
+        vm.stopBroadcast();
+    }
 }
 
 contract DeployRouter_Origin is Abstract_LayerZeroRouterDeployer {
@@ -148,6 +144,7 @@ contract DeployRouter_Origin is Abstract_LayerZeroRouterDeployer {
         deploy("ORIGIN");
     }
 }
+
 contract DeployRouter_Destination is Abstract_LayerZeroRouterDeployer {
     function run() external {
         deploy("DESTINATION");
@@ -182,14 +179,13 @@ contract EnrollRouter_Origin is Abstract_LayerZeroRouterDeployer {
     function run() external {
         enrollRouter("ORIGIN");
     }
-
 }
+
 contract EnrollRouter_Destination is Abstract_LayerZeroRouterDeployer {
     function run() external {
         enrollRouter("DESTINATION");
     }
 }
-
 
 contract DeploySimulateLzReceiver is Script {
     using stdJson for string;

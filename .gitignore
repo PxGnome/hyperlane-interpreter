@@ -7,3 +7,4 @@ forge-cache/
 .vscode
 .idea
 .env
+artifacts/

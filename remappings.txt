@@ -1,5 +1,10 @@
+hardhat/=node_modules/hardhat/
+@axelar-network/=node_modules/@axelar-network/
+@axelar/=node_modules/@axelar/
 @hyperlane-xyz/=node_modules/@hyperlane-xyz/
 @openzeppelin/=node_modules/@openzeppelin/
-@axelar-network/=node_modules/
+axelar-gmp-sdk-solidity/=node_modules/axelar-gmp-sdk-solidity/
 ds-test/=lib/forge-std/lib/ds-test/src/
+eth-gas-reporter/=node_modules/eth-gas-reporter/
 forge-std/=lib/forge-std/src/
+hardhat/=node_modules/hardhat/

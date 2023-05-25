@@ -92,5 +92,10 @@
     "mailbox": "0xCC737a94FecaeC165AbCf12dED095BB13F037685",
     "igp": "0xF987d7edcb5890cB321437d8145E3D51131298b6",
     "ism": "0xD3d062a5dcBA85ae863618d4c264d2358300c283"  
+  },
+  "hardhat": {
+    "mailbox": "0x0",
+    "igp": "0x0",
+    "ism": "0x0"  
   }
 }
