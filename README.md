@@ -34,7 +34,7 @@ To deploy using the deployment scripts you can use the hardhat tasks (more info 
 
 
 Here are the current tasks (be sure to replace your parameters):
-1. `lzrouter_deploy` - you can use this to deploy your LayerZero router, it includes deployment, initialized routers and domain mapping
+1. `lzrouter_deploy ${isMainnet}` - you can use this to deploy your LayerZero router, it includes deployment, initialized routers and domain mapping. Set it to be true for mainnet, false for testnet.
 2. `lzrouter_enroll ${originRouterAddr} ${destinationNetwork} ${enrollRouterAddr}` - for enrolling router after you it has been deployed
 3. `lzrouter_sendMessage ${originRouterAddr} ${destinationNetwork} ${enrollRouterAddr} ${message}` - for sending a test message on your router to ensure it works
 
