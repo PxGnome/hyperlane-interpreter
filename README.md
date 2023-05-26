@@ -70,7 +70,7 @@ This is the file with the core logic as it is designed based on:
 Note that some of the non-core features on `ILayerZeroEndpoint` are not supported by Hyperlane.
 
 Also the following custom functions may need attention:
-- `setEstGasAmount` -- Default gas is set to be 200,000 wei by default but you can set a higher gas if your computation on the destination chain is more complex
+- `setEstGasAmount` -- Default gas is set to be 200,000 by default but you can set a higher gas if your computation on the destination chain is more complex
 
 
 
