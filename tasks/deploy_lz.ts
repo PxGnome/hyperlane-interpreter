@@ -55,12 +55,10 @@ task("lzrouter_init", "init router if failed during deploy")
   .addPositionalParam("lzRouterAddr")
   .setAction(async (_taskArgs, hre) => {
     const accounts: Signer[] = await hre.ethers.getSigners();
-    // npx hardhat lzrouter_init 0xDddD17bDeF830103846f89cF61d362A689195c29
     const owner = accounts[0];
     const networkName = hre.network.name;
 
     console.log("Executing on network: %s", networkName);
-
     const lzRouterAddr = _taskArgs.lzRouterAddr;
 
     const lzRouter = await hre.ethers.getContractAt("LayerZeroRouter", lzRouterAddr);
@@ -107,8 +105,6 @@ task("lzrouter_mapping", "mapping router if failed during deploy")
 
     await lzRouter.connect(owner).mapDomains(lzDomains, hlDomains);
     console.log("Domain Mapping done");
-
-    console.log("Router Setup Complete")
   });
 
 task("lzrouter_enroll", "enroll router")
